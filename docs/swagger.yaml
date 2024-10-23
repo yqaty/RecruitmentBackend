@@ -1,0 +1,1388 @@
+definitions:
+  common.JSONResult:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  pkg.Application:
+    properties:
+      abandoned:
+        type: boolean
+      answer:
+        type: string
+      candidate_id:
+        description: manytoone
+        type: string
+      comments:
+        description: onetomany
+        items:
+          $ref: '#/definitions/pkg.Comment'
+        type: array
+      created_at:
+        type: string
+      grade:
+        description: pkg.Grade
+        type: string
+      group:
+        allOf:
+        - $ref: '#/definitions/pkg.Group'
+        description: pkg.Group
+      institute:
+        type: string
+      interview_allocations_group:
+        $ref: '#/definitions/pkg.Interview'
+      interview_allocations_group_id:
+        type: string
+      interview_allocations_team:
+        $ref: '#/definitions/pkg.Interview'
+      interview_allocations_team_id:
+        type: string
+      interview_selections:
+        description: manytomany
+        items:
+          $ref: '#/definitions/pkg.Interview'
+        type: array
+      intro:
+        type: string
+      is_quick:
+        type: boolean
+      major:
+        type: string
+      rank:
+        type: string
+      recruitment_id:
+        description: manytoone
+        type: string
+      referrer:
+        type: string
+      rejected:
+        type: boolean
+      resume:
+        type: string
+      step:
+        allOf:
+        - $ref: '#/definitions/pkg.Step'
+        description: pkg.Step
+      uid:
+        type: string
+      updated_at:
+        type: string
+      user_detail:
+        allOf:
+        - $ref: '#/definitions/pkg.UserDetail'
+        description: get from sso
+    type: object
+  pkg.Comment:
+    properties:
+      application_id:
+        description: manytoone
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      evaluation:
+        $ref: '#/definitions/pkg.Evaluation'
+      member_id:
+        description: manytoone
+        type: string
+      member_name:
+        type: string
+      uid:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  pkg.CreateAppOpts:
+    type: object
+  pkg.CreateCommentOpts:
+    properties:
+      application_id:
+        type: string
+      content:
+        type: string
+      evaluation:
+        $ref: '#/definitions/pkg.Evaluation'
+      member_id:
+        type: string
+      member_name:
+        type: string
+    required:
+    - application_id
+    type: object
+  pkg.CreateInterviewOpts:
+    properties:
+      date:
+        type: string
+      end:
+        type: string
+      period:
+        $ref: '#/definitions/pkg.Period'
+      start:
+        type: string
+    required:
+    - date
+    - end
+    - period
+    - start
+    type: object
+  pkg.CreateRecOpts:
+    properties:
+      beginning:
+        type: string
+      deadline:
+        type: string
+      end:
+        type: string
+      name:
+        type: string
+    required:
+    - beginning
+    - deadline
+    - end
+    - name
+    type: object
+  pkg.DeleteInterviewOpts:
+    properties:
+      iid:
+        type: string
+    required:
+    - iid
+    type: object
+  pkg.Evaluation:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Good
+    - Normal
+    - Bad
+  pkg.Gender:
+    enum:
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Male
+    - Female
+    - Oth
+  pkg.Group:
+    enum:
+    - web
+    - lab
+    - ai
+    - game
+    - mobile
+    - android
+    - ios
+    - design
+    - pm
+    - unique
+    type: string
+    x-enum-comments:
+      Unique: for team interview
+    x-enum-varnames:
+    - Web
+    - Lab
+    - Ai
+    - Game
+    - Mobile
+    - Android
+    - Ios
+    - Design
+    - Pm
+    - Unique
+  pkg.Interview:
+    properties:
+      applications:
+        description: manytomany
+        items:
+          $ref: '#/definitions/pkg.Application'
+        type: array
+      created_at:
+        type: string
+      date:
+        type: string
+      end:
+        type: string
+      name:
+        $ref: '#/definitions/pkg.Group'
+      period:
+        $ref: '#/definitions/pkg.Period'
+      recruitment_id:
+        description: manytoone
+        type: string
+      start:
+        type: string
+      uid:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  pkg.MembersDetail:
+    properties:
+      statistics:
+        additionalProperties:
+          type: integer
+        type: object
+    type: object
+  pkg.Period:
+    enum:
+    - morning
+    - afternoon
+    - evening
+    type: string
+    x-enum-varnames:
+    - Morning
+    - Afternoon
+    - Evening
+  pkg.Recruitment:
+    properties:
+      applications:
+        description: 一个hr->简历 ;级联删除
+        items:
+          $ref: '#/definitions/pkg.Application'
+        type: array
+      beginning:
+        type: string
+      created_at:
+        type: string
+      deadline:
+        type: string
+      end:
+        type: string
+      group_details:
+        additionalProperties:
+          type: integer
+        type: object
+      interviews:
+        description: 一个hr->面试 ;级联删除
+        items:
+          $ref: '#/definitions/pkg.Interview'
+        type: array
+      name:
+        type: string
+      statistics:
+        additionalProperties:
+          type: integer
+        type: object
+      stress_test_end:
+        type: string
+      stress_test_start:
+        type: string
+      uid:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  pkg.SMSType:
+    enum:
+    - Accept
+    - Reject
+    type: string
+    x-enum-varnames:
+    - Accept
+    - Reject
+  pkg.SendSMSOpts:
+    properties:
+      aids:
+        description: the applications will be sent sms
+        items:
+          type: string
+        type: array
+      current:
+        allOf:
+        - $ref: '#/definitions/pkg.Step'
+        description: the application current step
+      meeting_id:
+        type: string
+      next:
+        allOf:
+        - $ref: '#/definitions/pkg.Step'
+        description: the application next step
+      place:
+        description: the next step(interview/test) place
+        type: string
+      rest:
+        type: string
+      time:
+        description: the next step(interview/test) time
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/pkg.SMSType'
+        description: 'the candidate status : Pass or Fail'
+    required:
+    - current
+    - next
+    - type
+    type: object
+  pkg.Step:
+    enum:
+    - SignUp
+    - WrittenTest
+    - GroupTimeSelection
+    - GroupInterview
+    - OnlineGroupInterview
+    - StressTest
+    - TeamTimeSelection
+    - TeamInterview
+    - OnlineTeamInterview
+    - Pass
+    type: string
+    x-enum-comments:
+      GroupInterview: 组面
+      GroupTimeSelection: 组面时间选择
+      OnlineGroupInterview: 在线组面
+      OnlineTeamInterview: 在线群面
+      Pass: 通过
+      SignUp: 报名
+      StressTest: 熬测
+      TeamInterview: 群面
+      TeamTimeSelection: 面试时间选择
+      WrittenTest: 笔试
+    x-enum-varnames:
+    - SignUp
+    - WrittenTest
+    - GroupTimeSelection
+    - GroupInterview
+    - OnlineGroupInterview
+    - StressTest
+    - TeamTimeSelection
+    - TeamInterview
+    - OnlineTeamInterview
+    - Pass
+  pkg.UpdateAppOpts:
+    type: object
+  pkg.UpdateInterviewOpts:
+    properties:
+      date:
+        type: string
+      end:
+        type: string
+      period:
+        $ref: '#/definitions/pkg.Period'
+      start:
+        type: string
+      uid:
+        type: string
+    required:
+    - date
+    - end
+    - period
+    - start
+    type: object
+  pkg.UpdateRecOpts:
+    properties:
+      beginning:
+        type: string
+      deadline:
+        type: string
+      end:
+        type: string
+      name:
+        type: string
+      rid:
+        type: string
+    type: object
+  pkg.UserDetail:
+    properties:
+      avatar_url:
+        type: string
+      email:
+        type: string
+      gender:
+        $ref: '#/definitions/pkg.Gender'
+      groups:
+        items:
+          type: string
+        type: array
+      join_time:
+        type: string
+      lark_union_id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      uid:
+        type: string
+    type: object
+  pkg.UserDetailResp:
+    properties:
+      applications:
+        items:
+          $ref: '#/definitions/pkg.Application'
+        type: array
+      avatar_url:
+        type: string
+      email:
+        type: string
+      gender:
+        $ref: '#/definitions/pkg.Gender'
+      groups:
+        items:
+          type: string
+        type: array
+      join_time:
+        type: string
+      lark_union_id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      uid:
+        type: string
+    type: object
+externalDocs:
+  description: 飞书 doc
+  url: https://uniquestudio.feishu.cn/docx/Yh96d2DoyoCe6zxlR0ecSU5snDd?from=from_copylink
+host: https://dev.back.recruitment2023.hustunique.com/
+info:
+  contact:
+    email: wwbstar07@gmail.com
+  description: This is API doc of UniqueStudio Recruitment. For more API information,
+    please see https://app.apifox.com/project/2985744
+  title: UniqueStudio Recruitment API
+  version: "0.1"
+paths:
+  /applications:
+    post:
+      consumes:
+      - multipart/form-data
+      description: create an application. Remember to submit data with form instead
+        of json!!!
+      operationId: create_application.
+      parameters:
+      - description: application detail
+        in: body
+        name: pkg.CreateAppOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.CreateAppOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Application'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: create an application for candidate.
+      tags:
+      - application
+  /applications/{aid}:
+    delete:
+      consumes:
+      - application/json
+      description: delete candidate's application by applicationId, can only be deleted
+        by application's owner
+      operationId: delete_application.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Application'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: delete candidate's application by applicationId
+      tags:
+      - application
+    get:
+      consumes:
+      - application/json
+      description: get candidate's application by applicationId, candidate and member
+        will see different views of application
+      operationId: get_application.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Application'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get an application for candidate and member
+      tags:
+      - application
+    put:
+      consumes:
+      - multipart/form-data
+      description: update candidate's application by applicationId, can only be modified
+        by application's owner
+      operationId: update_application.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: string
+      - description: update application opts
+        in: body
+        name: pkg.UpdateAppOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.UpdateAppOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Application'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: update candidate's application by applicationId
+      tags:
+      - application
+  /applications/{aid}/abandoned:
+    put:
+      consumes:
+      - application/json
+      description: reject candidate's application by applicationId, can only be abandoned
+        by member of the corresponding group
+      operationId: reject_application.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: reject candidate's application by applicationId,
+      tags:
+      - application
+  /applications/{aid}/file/{type}:
+    get:
+      consumes:
+      - application/json
+      description: candidate/member download his/her answer file, can only be downloaded
+        by application's owner or member of the corresponding group
+      operationId: donwload_answer_file.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: candidate/member download his/her answer file
+      tags:
+      - application
+    put:
+      consumes:
+      - application/json
+      description: candidate upload his/her answer file, can only be uploaded by application's
+        owner
+      operationId: upload_answer_file.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: candidate upload his/her answer file
+      tags:
+      - application
+  /applications/{aid}/interview/{type}:
+    get:
+      consumes:
+      - application/json
+      description: allocate application's group/team interview time, can only be modified
+        by member of the corresponding group
+      operationId: set_application_interview_time.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      - description: group or team
+        enum:
+        - group
+        - team
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pkg.Interview'
+                  type: array
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: allocate application's group/team interview time.
+      tags:
+      - application
+    put:
+      consumes:
+      - application/json
+      description: allocate application's group/team interview time, can only be modified
+        by member of the corresponding group
+      operationId: set_application_interview_time.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      - description: group or team
+        enum:
+        - group
+        - team
+        in: path
+        name: type
+        required: true
+        type: string
+      - description: interview uid
+        in: body
+        name: interview_id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: allocate application's group/team interview time.
+      tags:
+      - application
+  /applications/{aid}/resume:
+    get:
+      consumes:
+      - application/json
+      description: get application's resume by applicationId, can only be got by member
+        or application's owner
+      operationId: get_resume.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get application's resume by applicationId
+      tags:
+      - application
+  /applications/{aid}/slots/{type}:
+    put:
+      consumes:
+      - application/json
+      description: candidate select group/team interview time, to save time, this
+        api will not check Whether slot number exceeds the limit
+      operationId: select_interview_slots.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      - description: group or team
+        enum:
+        - group
+        - team
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: candidate select group/team interview time.
+      tags:
+      - application
+  /applications/{aid}/step:
+    put:
+      consumes:
+      - application/json
+      description: get all applications by recruitmentId, can only be modified by
+        member of the corresponding group
+      operationId: set_application_step.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: set application step by applicationId.
+      tags:
+      - application
+  /applications/recruitment/{rid}:
+    get:
+      consumes:
+      - application/json
+      description: get all applications by recruitmentId, can only be got by member,
+        applications information included comments and interview selections.
+      operationId: get_all_applications.
+      parameters:
+      - description: application id
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pkg.Application'
+                  type: array
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get all applications by recruitmentId.
+      tags:
+      - application
+  /comments:
+    post:
+      consumes:
+      - application/json
+      description: create comment for applications, only can be created by member.
+      operationId: create_comment.
+      parameters:
+      - description: create comment opts
+        in: body
+        name: pkg.CreateCommentOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.CreateCommentOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Comment'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: create comment for application
+      tags:
+      - comment
+  /comments/{cid}:
+    delete:
+      consumes:
+      - application/json
+      description: delete comment of application, only can be deleted by comment's
+        owner.
+      operationId: delete_comment.
+      parameters:
+      - description: comment uid
+        in: path
+        name: cid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: delete comment of application
+      tags:
+      - comment
+  /recruitments:
+    get:
+      consumes:
+      - application/json
+      description: get pending(the most recent) recruitment, member can only get the
+        recruitment's detail(include application, interviews) after join in.
+      operationId: get_pending_recruitment.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Recruitment'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get pending recruitment.
+      tags:
+      - recruitment
+    post:
+      consumes:
+      - application/json
+      description: gcreate recruitment, only can be created by admin
+      operationId: create_recruitment.
+      parameters:
+      - description: create recruitment opts
+        in: body
+        name: pkg.CreateRecOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.CreateRecOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Recruitment'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: create recruitment.
+      tags:
+      - recruitment
+  /recruitments/{rid}:
+    get:
+      consumes:
+      - application/json
+      description: get recruitment, member can only get the recruitment's detail(include
+        application, interviews) after join in.
+      operationId: get_recruitment.
+      parameters:
+      - description: recruitment uid
+        in: path
+        name: rid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.Recruitment'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get recruitment.
+      tags:
+      - recruitment
+    put:
+      consumes:
+      - application/json
+      description: update recruitment, only can be updated by admin
+      operationId: update_recruitment.
+      parameters:
+      - description: recruitment uid
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: update recruitment opts
+        in: body
+        name: pkg.UpdateRecOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.UpdateRecOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: update recruitment.
+      tags:
+      - recruitment
+  /recruitments/{rid}/file/{group}/{type}:
+    get:
+      consumes:
+      - application/json
+      description: upload recruitment file, such as written test.
+      operationId: download_recruitment_file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: download recruitment file, such as written test.
+      tags:
+      - recruitment
+    put:
+      consumes:
+      - application/json
+      description: upload recruitment file, such as written test.
+      operationId: upload_recruitment_file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: upload recruitment file, such as written test.
+      tags:
+      - recruitment
+  /recruitments/{rid}/interviews/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: delete recruitment interviews.
+      operationId: delete_recruitment_interviews.
+      parameters:
+      - description: recruitment id
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: pkg.Group or unique
+        enum:
+        - web
+        - lab
+        - ai
+        - game
+        - mobile
+        - android
+        - ios
+        - design
+        - pm
+        - unique
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: delete interview opts
+        in: body
+        name: '[]pkg.DeleteInterviewOpts'
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pkg.DeleteInterviewOpts'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: delete recruitment interviews.
+      tags:
+      - interviews
+    get:
+      consumes:
+      - application/json
+      description: get recruitment interviews, candidate can't see slotNumber and
+        selectNumber of Interviews (will get interviews of groups or unique), guarantee
+        slotNumber > selectNumber
+      operationId: get_recruitment_interviews.
+      parameters:
+      - description: recruitment id
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: pkg.Group
+        enum:
+        - web
+        - lab
+        - ai
+        - game
+        - mobile
+        - android
+        - ios
+        - design
+        - pm
+        - unique
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/pkg.Interview'
+                  type: array
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: get recruitment interviews.
+      tags:
+      - interviews
+    post:
+      consumes:
+      - application/json
+      description: create recruitment interviews.
+      operationId: create_recruitment_interviews.
+      parameters:
+      - description: recruitment id
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: pkg.Group
+        enum:
+        - web
+        - lab
+        - ai
+        - game
+        - mobile
+        - android
+        - ios
+        - design
+        - pm
+        - unique
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: create interview opts
+        in: body
+        name: '[]pkg.CreateInterviewOpts'
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pkg.CreateInterviewOpts'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: create recruitment interviews.
+      tags:
+      - interviews
+    put:
+      consumes:
+      - application/json
+      description: get recruitment interviews, use PUt method to prevent resource
+        are duplicated
+      operationId: set_recruitment_interviews.
+      parameters:
+      - description: recruitment id
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: pkg.Group or unique
+        enum:
+        - web
+        - lab
+        - ai
+        - game
+        - mobile
+        - android
+        - ios
+        - design
+        - pm
+        - unique
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: update interview info
+        in: body
+        name: '[]pkg.UpdateInterviewOpts'
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/pkg.UpdateInterviewOpts'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: set recruitment interviews.
+      tags:
+      - interviews
+  /recruitments/{rid}/stressTest:
+    put:
+      consumes:
+      - application/json
+      description: set stress test start and end time.
+      operationId: set_stress_test_time
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: set stress test start and end time.
+      tags:
+      - recruitment
+  /sms:
+    post:
+      consumes:
+      - application/json
+      description: Send sms to user, include Accept, Reject, detailed information
+        reference https://uniquestudio.feishu.cn/docx/Yh96d2DoyoCe6zxlR0ecSU5snDd?from=from_copylink
+      operationId: send_sms
+      parameters:
+      - description: sms body params
+        in: body
+        name: pkg.SendSMSOpts
+        required: true
+        schema:
+          $ref: '#/definitions/pkg.SendSMSOpts'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: Send sms
+      tags:
+      - Sms
+  /sms/code:
+    post:
+      consumes:
+      - application/json
+      description: Send code to admin
+      operationId: send_code
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: Send code
+      tags:
+      - Sms
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Get members detail
+      operationId: get_members_detail
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/common.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/pkg.MembersDetail'
+              type: object
+        "400":
+          description: code is not 0 and msg not empty
+          schema:
+            $ref: '#/definitions/common.JSONResult'
+      summary: Get members detail
+      tags:
+      - User
+swagger: "2.0"
