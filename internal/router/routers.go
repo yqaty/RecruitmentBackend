@@ -32,8 +32,8 @@ func NewRouter() *gin.Engine {
 
 	if gin.Mode() == gin.DebugMode {
 		config := cors.DefaultConfig()
-		//config.AllowAllOrigins = true
-		config.AllowOrigins = []string{"https://join.hustunique.com", "https://hr.hustunique.com", "https://join2024.hustunique.com", "https://hr2024.hustunique.com", "https://localhost:5173", "http://localhost:5173", "https://5173.hustunique.com", "http://5173.hustunique.com", "https://dev.join2024.hustunique.com"}
+		config.AllowAllOrigins = true
+		//config.AllowOrigins = []string{"https://join.hustunique.com", "https://hr.hustunique.com", "https://join2024.hustunique.com", "https://hr2024.hustunique.com", "https://localhost:5173", "http://localhost:5173", "https://5173.hustunique.com", "http://5173.hustunique.com", "https://dev.join2024.hustunique.com"}
 		config.AllowCredentials = true
 		config.AllowHeaders = append(config.AllowHeaders, "Authorization", "Credentials")
 		r.Use(cors.New(config))

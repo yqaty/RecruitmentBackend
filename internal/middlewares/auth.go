@@ -88,20 +88,20 @@ func RedirectMiddleware(c *gin.Context) {
 
 	if err != nil {
 		c.Abort()
-		c.Redirect(http.StatusFound, "https://sso2024.hustunique.com")
+		c.Redirect(http.StatusFound, "http://81.70.253.156:54251")
 		return
 	}
 	s := sessions.Default(c)
 	u := s.Get(pkg.SessionNameUID)
 	if u == nil {
 		c.Abort()
-		c.Redirect(http.StatusFound, "https://sso2024.hustunique.com")
+		c.Redirect(http.StatusFound, "http://81.70.253.156:54251")
 		return
 	}
 	uid, ok := u.(string)
 	if !ok {
 		c.Abort()
-		c.Redirect(http.StatusFound, "https://sso2024.hustunique.com")
+		c.Redirect(http.StatusFound, "http://81.70.253.156:54251")
 		return
 	}
 	c.Request = c.Request.WithContext(common.CtxWithUID(apmCtx, uid))
